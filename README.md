@@ -1,4 +1,5 @@
 #RbuWSL: Rsync backup using Windows Subsystem for Linux
+
 README is pending. More coming soon. 
 
 ## Motivation
@@ -8,3 +9,14 @@ I needed a faster method to quickly backup all my files on Windows to an externa
 RbuWSL's bashs script will backup your desired data on Windows 10 to an external drive using rsync. Rsync allows differential backup of data allowing only new/modified files to be transferred. On Windows 10, use of rsync can be achieved using Ubuntu (Bash) through Windows Subsystem for Linux (WSL). 
 
 
+## Requirements
+
+## How to run 
+
+## Current issues
+
+## Future work
+
+## References 
+
+## License
