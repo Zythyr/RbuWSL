@@ -5,8 +5,8 @@
 ############################################################################################
 #
 # Author: Zythyr https://github.com/zythyr 
-# Last updated: 2018-01-13
-# Version: 1.0 
+# Last updated: 2018-01-14
+# Version: 1.2 
 #
 # Description: 
 # This bash script will backup your desired data on Windows 10 to an external drive 
@@ -64,7 +64,7 @@
 
 
 
-#### CONSTANTS START
+########  CONSTANTS START  ########
 
 timeNOW=$(date +"%Y-%m-%d-%H-%M-%S") # Get current timestamp https://stackoverflow.com/questions/17066250/create-timestamp-variable-in-bash-script  
 
@@ -74,59 +74,74 @@ DESTINATION_MOUNT_PATH=/mnt/"$DESTINATION_MOUNT_NAME"				# This is the mount pat
 DESTINATION_BACKUP_PATH="rbuwsl"									# This is the folder path in the external drive where you will be backup up to. Path is relative to root of the external drive.
 
 
-SOURCE_WINDOWS_USERNAME="Username" 									# Username of the person on Windows where backup will be taken from 
+SOURCE_WINDOWS_USERNAME="Public" 									# Username of the person on Windows where backup will be taken from 
 SOURCE_BACKUP_PATH=""												# Path relative to the root of user personal folder where all the desired folders to be backed up are located
 
 
 # List all the folders below that you want to backup. These folders should be located directly under the $SOURCE_BACKUP_PATH 
 # https://stackoverflow.com/questions/8880603/loop-through-an-array-of-strings-in-bash 
 declare -a SOURCE_BACKUP_PATH_FOLDERS=(
-	"FolderA"
-	"Folder B"
-	"Folder C"
+	"Pictures"
+	"My Music"
+	"Documents"
+	#"Downloads"
 	)
+
+
+# Make sure to use --no-p --chmod=ugo=rwX on Windows https://superuser.com/a/1184342/607501 
+## Although not needed, its better to be safe. That option was needed when using Cygwin, but this script is built for using rysnc on Windows with Ubuntu Bash (WSL)	
+RSYNC_OPTIONS="-avhP --no-p --chmod=ugo=rwX --stats --delete"
+
 	
-#### CONSTANTS END 	
+######## CONSTANTS END 	########
 
 
 
 echo -e "\n=============== Welcome to RbuWSL: Rsync backup using Windows Subsystem for Linux  ===============\n"
+echo -e "Lets setup the backup process. RbuWSL will ask you few questions regarding the backup.\n"
+read -p "1. What is the drive letter of the destination external drive? Default: $DESTINATION_DRIVE_LETTER " USER_INPUT_DESTINATION_DRIVE_LETTER
+read -p "2. What is the folder path relative to root of external drive where you want to backup to (case sensitive)? Default: '$DESTINATION_BACKUP_PATH' " USER_INPUT_DESTINATION_BACKUP_PATH
+read -p "3. What is the Windows username under which the files to be backed up are located (case sensitive)? Default: '$SOURCE_WINDOWS_USERNAME' " USER_INPUT_SOURCE_WINDOWS_USERNAME
+read -p "4. What is the path relative to root of user's personal which contains all the folders you want to backup? (case sensitive)? Default: '$SOURCE_BACKUP_PATH' " USER_INPUT_SOURCE_BACKUP_PATH
+read -p "5. What options do you want to use for rsync? (case sensitive)? Default: $RSYNC_OPTIONS " USER_INPUT_RSYNC_OPTIONS
 
-read -p "What is the drive letter of the destination external drive? Default: $DESTINATION_DRIVE_LETTER " USER_INPUT_DESTINATION_DRIVE_LETTER
-read -p "What is the folder path relative to root of external drive where you want to backup to (case sensitive)? Default: '$DESTINATION_BACKUP_PATH' " USER_INPUT_DESTINATION_BACKUP_PATH
-read -p "What is the Windows username under which the files to be backed up are located (case sensitive)? Default: '$SOURCE_WINDOWS_USERNAME' " USER_INPUT_SOURCE_WINDOWS_USERNAME
-read -p "What is the path relative to root of user's personal which contains all the folders you want to backup? (case sensitive)? Default: '$SOURCE_BACKUP_PATH' " USER_INPUT_SOURCE_BACKUP_PATH
+# Get user to update the SOURCE_BACKUP_PATH_FOLDERS which contains all the folders that need to be backed up in the source files. 
+while true; do
+    read -p "Did you edit this script and update the constant SOURCE_BACKUP_PATH_FOLDERS? If NOT, then type N to quit this script. You must edit the constant SOURCE_BACKUP_PATH_FOLDERS, to let RbuWSL know which folders you want to backup in your source directory. (Y/N)? " yn
+    case $yn in
+        [Yy]* ) break;;
+        [Nn]* ) exit;;
+        * ) echo "Please answer yes or no.";;
+    esac
+done
+
 
 if ! [[ -z "$USER_INPUT_DESTINATION_DRIVE_LETTER" ]]; then
 	DESTINATION_DRIVE_LETTER="$USER_INPUT_DESTINATION_DRIVE_LETTER"
 fi 
-
 if ! [[ -z "$USER_INPUT_DESTINATION_BACKUP_PATH" ]]; then
 	DESTINATION_BACKUP_PATH="$USER_INPUT_DESTINATION_BACKUP_PATH"
 fi 
-
 if ! [[ -z "$USER_INPUT_SOURCE_WINDOWS_USERNAME" ]]; then
 	SOURCE_WINDOWS_USERNAME="$USER_INPUT_SOURCE_WINDOWS_USERNAME"
 fi 
-
 if ! [[ -z "$USER_INPUT_SOURCE_BACKUP_PATH" ]]; then
 	SOURCE_BACKUP_PATH="$USER_INPUT_SOURCE_BACKUP_PATH"
 fi 
+if ! [[ -z "$USER_INPUT_RSYNC_OPTIONS" ]]; then
+	RSYNC_OPTIONS="$USER_INPUT_RSYNC_OPTIONS"
+fi
 
 SOURCE_PATH="/mnt/c/Users/$SOURCE_WINDOWS_USERNAME/$SOURCE_BACKUP_PATH"
 DESTINATION_PATH="$DESTINATION_MOUNT_PATH/$DESTINATION_BACKUP_PATH"	
-
-# Make sure to use --no-p --chmod=ugo=rwX on Windows https://superuser.com/a/1184342/607501 
-## Although not needed, its better to be safe. That option was needed when using Cygwin, but this script is built for using rysnc on Windows with Ubuntu Bash (WSL)	
-rsyncOptions="-avhP --no-p --chmod=ugo=rwX --stats --delete --log-file="$SOURCE_PATH/rsync-log-"$timeNOW".txt""s
-
+RSYNC_LOG="--log-file="$SOURCE_PATH/rsync-log-"$timeNOW".txt""
 	
 #### SCRIPT STARTS HERE	
 
 
 function mount_drive_drvfs
 {
-# Mount the external drive to desired Windows drive letter 
+# Mount the external drive to desired Windows drive letter because in WSL external drive is not automatically mounted. 
 ##	$1 = Drive letter to be mounted. When external drive is connected to PC, Windows automatically assigns a letter (ex: D, E, F...)
 ##	$2 = Mount path and directory name (ex: /mnt/temp_mount
 
@@ -147,7 +162,9 @@ fi
 
 function unmount_drive_drvfs
 {
-# Unmount the external drive from Ubuntu/Bash WSL. This won't unmount it from Windows File Explorer 
+# Unmount the external drive from Ubuntu/Bash WSL. This won't unmount it from Windows File Explorer. 
+# Unmounting not necessary and if it fails no problem because oncew you remove the external drive, 
+# the drive will be automatically unmounted from WSL
 ##	$1 = Drive letter to be unmounted. When external drive is connected to PC, Windows automatically assigns a letter (ex: D, E, F...)
 ##	$2 = Mount path and directory name (ex: /mnt/temp_mount
 
@@ -169,8 +186,6 @@ else
 fi 
 }	
 
-
-
 echo -e "\n=============== BACKUP WITH RSYNC STARTING ==============="
 echo -e "Destination drive letter: $DESTINATION_DRIVE_LETTER"
 echo -e "Destination relative path: $DESTINATION_BACKUP_PATH"
@@ -179,7 +194,7 @@ echo -e "Source relative path: $SOURCE_BACKUP_PATH"
 echo -e "\n" 
 echo -e "Rsync source path: $SOURCE_PATH"
 echo -e "Rsync destination path: $DESTINATION_PATH"
-echo -e "RSYNC OPTIONS: $rsyncOptions"
+echo -e "RSYNC OPTIONS: $RSYNC_OPTIONS"
 
 echo -e "\n"
 	
@@ -221,6 +236,10 @@ if ! [[ -d $DESTINATION_PATH ]]; then
 	echo -e "Directory $DESTINATION_BACKUP_PATH at destination created."
 fi
 
+echo -e "\nRbuWSL will start backup in 5 seconds\n"
+sleep 5
+
+
 START_TIME=$(date +%s)
 
 for i in "${SOURCE_BACKUP_PATH_FOLDERS[@]}"
@@ -228,7 +247,7 @@ do
 	echo -e "==========================================================================="
 	echo -e "\nBacking up the folder: " "$SOURCE_PATH"/"$i" "\n"
 	echo -e "==========================================================================="
-	rsync $rsyncOptions "$SOURCE_PATH"/"$i" "$DESTINATION_PATH"
+	rsync $RSYNC_OPTIONS $RSYNC_LOG "$SOURCE_PATH"/"$i" "$DESTINATION_PATH"
 done 
 
 END_TIME=$(date +%s)
