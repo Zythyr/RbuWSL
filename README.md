@@ -40,7 +40,7 @@ I needed a faster method to quickly backup all my files on Windows to an externa
 * Improve this script syntax to follow POSIX standard: http://mywiki.wooledge.org/BashGuide http://s.ntnu.no/bashguide.pdf 
 ### Known Issues 
 * This script has NOT been tested on Cygwin on Windows. Do NOT use with Cygwin. If you want to use it with Cygwin you will need to modify this script. 
-* This script has NOT been tested on network drives (NFS and SMB (Samba)) mounted drive. 
+* This script has NOT been tested on network drives (NFS/CIFS/SMB). 
 	* Will need to test mounting/unmount network drives with Ubuntu/Bash WSL on Windows 10
 	* Will need to test permissions and ensure no ACL permission issues occur 
 ## References 
