@@ -25,15 +25,15 @@ I needed a faster method to quickly backup all my files on Windows to an externa
 2. Run Ubuntu (bash) on Windows 10
 3. Navigate to location of this script 
 4. Run the script by typing the command: ./RbuWSL.sh
-## Example
 ## Suggestions 
 * Use the rsync option `-avhP --stats --delete` for basic use. 
 	* These options will duplicate your source backup files onto the destination drive. The `--delete` option will be ensure to delete the files in the destination drive that no longer exist your source files. 
 * Use the option `--no-p --chmod=ugo=rwX` to ensure no ACL permission issues occur. 
 	* This is NOT really needed when using Ubuntu/Bash WSL on Windows. 
 	* I use this option because I am paranoid of getting unaccessible files/folders due to ACL permission issues I had in the past when using rsync with Cygwin. Refer to https://superuser.com/a/1184342/607501 for more details.
-* Do NOT use this script with Cygwin because I have NOT tested it yet. If you want to use it with Cygwin you may need to do modifications to this script. 
+* Modify the constants in this script so you do NOT have to type the settings every time you backup. 
 
+## Example
 
 ## TODO
 * Make this script universal so it's not just limited to using it with WSL 
