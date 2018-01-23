@@ -43,15 +43,15 @@ Coming soon
 ### Example
 Assume your name is `John` and when you connect your external drive to Windows PC, it shows up as `drive G`, and you want to backup the following folders: `Pictures`, `My Music`, and `Downloads` to the `JohnBackup` folder in the root of your external drive. Then you would modify the CONSTANTS in the *RbuWSL.sh* file to as shown below.
 
-> DESTINATION_DRIVE_LETTER="G"
->DESTINATION_BACKUP_PATH="JohnBackup"
->SOURCE_WINDOWS_USERNAME="John"
->SOURCE_BACKUP_PATH=""
->declare -a SOURCE_BACKUP_PATH_FOLDERS=(
->	"Pictures"
->	"My Music"
->	"Downloads"
->	)
+`DESTINATION_DRIVE_LETTER="G"`
+`DESTINATION_BACKUP_PATH="JohnBackup"`
+`SOURCE_WINDOWS_USERNAME="John"`
+`SOURCE_BACKUP_PATH=""`
+`declare -a SOURCE_BACKUP_PATH_FOLDERS=(
+	"Pictures"
+	"My Music"
+	"Downloads"
+	)`
 
 ![](https://i.imgur.com/Kakuuxy.png)
 ## TODO
