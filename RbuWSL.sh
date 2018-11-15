@@ -42,7 +42,7 @@ RSYNC_OPTIONS="-avhP --no-p --chmod=ugo=rwX --stats --delete"
 
 ######## DO NOT TOUCH CONSTANTS BELOW ########
 timeNOW=$(date +"%Y-%m-%d-%H-%M-%S") # Get current timestamp https://stackoverflow.com/questions/17066250/create-timestamp-variable-in-bash-script  
-DESTINATION_MOUNT_NAME="temp_rbuwsl_rsync_backup"					# This is the name of the directory created under /mnt where the external drive will be mounted to 
+DESTINATION_MOUNT_NAME="temp_rbuwsl/backup_$timeNOW"					# This is the name of the directory created under /mnt where the external drive will be mounted to 
 DESTINATION_MOUNT_PATH=/mnt/"$DESTINATION_MOUNT_NAME"				# This is the mount path for the external drive 
 
 	
@@ -106,7 +106,7 @@ if [ $1 = "C" ] || [ $1 = "c" ]; then
 	echo -e "Mount: DANGER: Can't mount C drive. This drive already exist and is the root of Windows. Don't mess with this drive letter "
 	exit
 else 
-	sudo mkdir $2
+	sudo mkdir -p $2
 	echo -e "Mount: Directory $2 has been created"
 	sudo mount -t drvfs $1: $2
 	echo -e "Mount: External drive/USB at Windows drive letter $1 has been mounted to $2"
