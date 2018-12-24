@@ -37,7 +37,8 @@ declare -a SOURCE_BACKUP_PATH_FOLDERS=(
 
 # Make sure to use --no-p --chmod=ugo=rwX on Windows https://superuser.com/a/1184342/607501 
 ## Although not needed, its better to be safe. That option was needed when using Cygwin, but this script is built for using rysnc on Windows with Ubuntu Bash (WSL)	
-RSYNC_OPTIONS="-avhP --no-p --chmod=ugo=rwX --stats --delete"
+#RSYNC_OPTIONS="-avhP --no-p --chmod=ugo=rwX --stats --delete"
+RSYNC_OPTIONS="-avhP --stats --delete"
 
 
 ######## DO NOT TOUCH CONSTANTS BELOW ########
@@ -87,7 +88,7 @@ fi
 
 SOURCE_PATH="/mnt/c/Users/$SOURCE_WINDOWS_USERNAME/$SOURCE_BACKUP_PATH"
 DESTINATION_PATH="$DESTINATION_MOUNT_PATH/$DESTINATION_BACKUP_PATH"	
-RSYNC_LOG="--log-file="$SOURCE_PATH/rsync-log-"$timeNOW".txt""
+RSYNC_LOG="--log-file="./rsync-log-"$timeNOW".txt""
 	
 #### SCRIPT STARTS HERE	
 
@@ -108,7 +109,9 @@ if [ $1 = "C" ] || [ $1 = "c" ]; then
 else 
 	sudo mkdir -p $2
 	echo -e "Mount: Directory $2 has been created"
-	sudo mount -t drvfs $1: $2
+	userId=$(id -u) #Get the uid/gid of the user running the process 
+	userGroup=$(id -g) #Get the uid/gid of the user running the process 
+	sudo mount -t drvfs $1: $2 -o uid=$userId,gid=$userGroup #https://github.com/Microsoft/WSL/issues/3187#issuecomment-388904048
 	echo -e "Mount: External drive/USB at Windows drive letter $1 has been mounted to $2"
 fi 
 }	
@@ -197,8 +200,10 @@ START_TIME=$(date +%s)
 
 for i in "${SOURCE_BACKUP_PATH_FOLDERS[@]}"
 do 
-	echo -e "==========================================================================="
-	echo -e "\nBacking up the folder: " "$SOURCE_PATH"/"$i" "\n"
+	echo -e "\n==========================================================================="
+	echo -e "BACKING UP" 
+	echo -e "Source: " "$SOURCE_PATH"/"$i"
+	echo -e "Destination: " "$DESTINATION_PATH" 
 	echo -e "==========================================================================="
 	rsync $RSYNC_OPTIONS $RSYNC_LOG "$SOURCE_PATH"/"$i" "$DESTINATION_PATH"
 done 
