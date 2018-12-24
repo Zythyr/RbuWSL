@@ -63,14 +63,14 @@ Assume your name is `John` and when you connect your external drive to Windows P
 ### Known Issues 
 * None yet 
 
+## Personal references 
+Links below are my personal references I read while writing this script. I am listing them in the README as my own personal bookmarks in case I need to refer to them in the future. 
 ### WSL Documentations 
 * Windows Subsystem for Linux Documentation https://docs.microsoft.com/en-us/windows/wsl/about 
 * Mounting and permissions 
 	* File System Improvements to the Windows Subsystem for Linux https://blogs.msdn.microsoft.com/wsl/2017/04/18/file-system-improvements-to-the-windows-subsystem-for-linux/
 	* Chmod/Chown WSL Improvements https://blogs.msdn.microsoft.com/commandline/2018/01/12/chmod-chown-wsl-improvements/  
 	* How to Mount Removable Drives and Network Locations in the Windows Subsystem for Linux https://www.howtogeek.com/331053/how-to-mount-removable-drives-and-network-locations-in-the-windows-subsystem-for-linux/ 
-## Personal references 
-Links below are my personal references I read while writing this script. I am listing them in the README as my own personal bookmarks in case I need to refer to them in the future. 
 ###  Bash syntax 
 * BashGuide http://mywiki.wooledge.org/BashGuide 
 * BashGuide http://s.ntnu.no/bashguide.pdf
