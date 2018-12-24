@@ -11,6 +11,8 @@ I needed a faster method to quickly backup all my files on Windows to an externa
 
 ### Disclaimer
 Use at your own risk. The author, maintainers, and contributors of this script are not responsible for any loss and corruption this script may cause to your files, system, and the drive you are backing up to. Make sure to read the README properly before using this script. 
+* Only use this script on Windows with WSL
+* Do NOT use this script with Cygwin, MinGW, Git Bash, etc.. You may run into permission related issues. 
 
 ### License
 Coming soon
@@ -57,12 +59,16 @@ Assume your name is `John` and when you connect your external drive to Windows P
 ## TODO
 * Make this script universal so it's not just limited to using it with WSL 
 * Improve this script syntax to follow POSIX standard: http://mywiki.wooledge.org/BashGuide http://s.ntnu.no/bashguide.pdf 
-### Known Issues 
-* This script has NOT been tested on Cygwin on Windows. Do NOT use with Cygwin. If you want to use it with Cygwin you will need to modify this script. 
-* This script has NOT been tested on network drives (NFS/CIFS/SMB). 
-	* Will need to test mounting/unmount network drives with Ubuntu/Bash WSL on Windows 10
-	* Will need to test permissions and ensure no ACL permission issues occur 
 
+### Known Issues 
+* None yet 
+
+### WSL Documentations 
+* Windows Subsystem for Linux Documentation https://docs.microsoft.com/en-us/windows/wsl/about 
+* Mounting and permissions 
+	* File System Improvements to the Windows Subsystem for Linux https://blogs.msdn.microsoft.com/wsl/2017/04/18/file-system-improvements-to-the-windows-subsystem-for-linux/
+	* Chmod/Chown WSL Improvements https://blogs.msdn.microsoft.com/commandline/2018/01/12/chmod-chown-wsl-improvements/  
+	* How to Mount Removable Drives and Network Locations in the Windows Subsystem for Linux https://www.howtogeek.com/331053/how-to-mount-removable-drives-and-network-locations-in-the-windows-subsystem-for-linux/ 
 ## Personal references 
 Links below are my personal references I read while writing this script. I am listing them in the README as my own personal bookmarks in case I need to refer to them in the future. 
 ###  Bash syntax 
@@ -71,10 +77,6 @@ Links below are my personal references I read while writing this script. I am li
 * The POSIX Shell And Utilities http://shellhaters.org/ 
 * https://stackoverflow.com/questions/8880603/loop-through-an-array-of-strings-in-bash  
 * https://www.shellhacks.com/yes-no-bash-script-prompt-confirmation/
-### Mounting/Unmounting 
-* WSL File System Support https://blogs.msdn.microsoft.com/wsl/2016/06/15/wsl-file-system-support/ 
-* File System Improvements to the Windows Subsystem for Linux https://blogs.msdn.microsoft.com/wsl/2017/04/18/file-system-improvements-to-the-windows-subsystem-for-linux/ 
-* How to Mount Removable Drives and Network Locations in the Windows Subsystem for Linux https://www.howtogeek.com/331053/how-to-mount-removable-drives-and-network-locations-in-the-windows-subsystem-for-linux/ 
 ### ACL Permissions Troubleshooting 
 * https://superuser.com/a/1184342/607501 
 * https://github.com/Microsoft/WSL/issues/1799
